@@ -24,3 +24,31 @@ J'ai regardé l'ordre des fichiers et suivi ce que dit le guide : créer
 reponse_retenue_id après la table reponses, dans une migration à part. 
 J'ai aussi utilisé l'IA pour comprendre comment écrire ces méthodes 
 (belongsTo et hasMany), je l'avais pas trop compris au début.
+
+
+## Phase 2 — Les factories et les seeders
+
+Branche : feat/02-seeders
+Dates : 17 août 2026
+
+### Ce que j'ai fait
+J'ai rempli les factories pour Promotion, Publication et Reponse, puis 
+j'ai écrit le seeder principal qui crée deux promotions avec leurs 
+membres, des publications, des questions/réponses, et les quatre 
+comptes de démonstration. J'ai testé avec migrate:fresh --seed et 
+vérifié les chiffres dans Tinker.
+
+### Pourquoi je l'ai fait ainsi
+J'ai suivi le guide pour avoir deux promotions bien séparées, ce qui 
+sert plus tard à tester le cloisonnement entre groupes.
+
+### La difficulté rencontrée
+J'ai eu un problème de branche : j'ai fait mes commits directement sur 
+main au lieu de feat/02-seeders sans m'en rendre compte. J'ai aussi eu 
+du mal à comprendre recycle() dans les factories.
+
+### Comment je l'ai résolue
+J'ai créé la branche feat/02-seeders après coup à partir de mon travail 
+sur main, et je l'ai poussée sur GitHub. Pour recycle(), j'ai compris 
+que ça sert à réutiliser les membres déjà créés au lieu d'en fabriquer 
+des nouveaux à chaque publication.
