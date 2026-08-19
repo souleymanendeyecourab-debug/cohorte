@@ -52,3 +52,37 @@ J'ai créé la branche feat/02-seeders après coup à partir de mon travail
 sur main, et je l'ai poussée sur GitHub. Pour recycle(), j'ai compris 
 que ça sert à réutiliser les membres déjà créés au lieu d'en fabriquer 
 des nouveaux à chaque publication.
+
+
+
+## Phase 3 — L'authentification avec Laravel Fortify
+
+Branche : feat/03-authentification-fortify
+Dates : 17 au 19 août 2026
+
+### Ce que j'ai fait
+J'ai installé Fortify, configuré les fonctionnalités utiles (inscription, 
+réinitialisation du mot de passe) et retiré celles hors périmètre (2FA, 
+passkeys). J'ai écrit les 4 vues d'authentification (login, register, 
+forgot-password, reset-password), le layout de base, et modifié 
+CreateNewUser.php pour vérifier le code d'invitation à l'inscription. 
+J'ai testé à la main : inscription avec code valide, inscription avec 
+code invalide, connexion.
+
+### Pourquoi je l'ai fait ainsi
+Fortify gère la sécurité (mots de passe, tentatives de connexion) mais 
+ne fournit aucune vue, donc c'est à moi d'écrire les formulaires. Ça 
+permet de comprendre ce qui se passe au lieu d'utiliser un truc tout fait.
+
+### La difficulté rencontrée
+J'ai eu deux problèmes. D'abord php artisan serve refusait de démarrer 
+sur tous les ports, j'ai dû utiliser php -S à la place. Ensuite le 
+layout plantait sur toutes les pages à cause d'un lien vers une route 
+(feed.index) qui n'existe pas encore, donc même la page d'inscription 
+ne s'affichait pas.
+
+### Comment je l'ai résolue
+Pour le serveur, j'ai utilisé la commande php -S 127.0.0.1:8000 -t public 
+à la place de php artisan serve. Pour le layout, j'ai utilisé 
+Route::has() pour vérifier si la route existe avant de générer son URL, 
+et rediriger vers / sinon.
