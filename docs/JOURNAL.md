@@ -86,3 +86,71 @@ Pour le serveur, j'ai utilisé la commande php -S 127.0.0.1:8000 -t public
 à la place de php artisan serve. Pour le layout, j'ai utilisé 
 Route::has() pour vérifier si la route existe avant de générer son URL, 
 et rediriger vers / sinon.
+
+
+## Phase 4 — Rejoindre une promotion et le profil
+
+Branche : feat/04-adhesion-promotion
+Dates : 20 au 21 août 2026
+
+### Ce que j'ai fait
+Créé le middleware ExigePromotion pour rediriger les membres sans promotion vers la page
+d'adhésion, le AdhesionController permettant de rejoindre une promotion via un code
+d'invitation, et le ProfilController + la vue associée pour afficher les informations du
+membre connecté (nom, e-mail, rôle, promotion, points).
+
+### Pourquoi je l'ai fait ainsi
+J'ai suivi la structure imposée par le guide : un middleware dédié pour garantir qu'aucune
+route métier ne reçoive un utilisateur sans promotion_id, et des contrôleurs organisés par
+module (Promotion/, Profil/) plutôt qu'à plat.
+
+### La difficulté rencontrée
+J'ai eu deux problèmes distincts. D'abord, un bug de syntaxe Blade dans profil/show.blade.php
+(la directive @extends mal écrite et des caractères parasites en fin de fichier), qui empêchait
+la vue de se compiler. Ensuite, un problème d'environnement bien plus long à diagnostiquer :
+`php artisan serve` refusait de démarrer sur tous les ports testés, et même après avoir
+contourné ça avec `php -S`, mon navigateur Chrome semblait bloquer l'affichage des pages
+malgré des routes fonctionnelles.
+
+### Comment je l'ai résolue
+Pour le bug Blade, j'ai comparé mon fichier ligne par ligne avec la syntaxe attendue.
+Pour le problème d'environnement, j'ai isolé la cause étape par étape : d'abord confirmé que
+PHP fonctionnait bien avec `php -S`, puis confirmé avec `curl.exe` que le serveur et Laravel
+répondaient correctement même quand le navigateur semblait ne rien afficher — ce qui a
+prouvé que le problème venait du navigateur et non de mon code. Un second profil Chrome a
+résolu le blocage.
+
+## Phase 5 — Le fil de promotion et le cloisonnement
+
+Branche : feat/05-fil-promotion
+Dates : 22 au 23 août 2026
+
+### Ce que j'ai fait
+Créé le contrôleur de ressource PublicationController (index, create, store, show, destroy),
+la PublicationPolicy qui garantit le cloisonnement entre promotions, le StorePublicationRequest
+pour la validation, le composant Blade carte-publication, et les vues du fil (index, create,
+show). Testé la création de publication et surtout le cloisonnement : un membre d'une
+promotion ne peut pas accéder à une publication d'une autre promotion.
+
+### Pourquoi je l'ai fait ainsi
+J'ai utilisé $this->authorize() explicitement dans chaque méthode du contrôleur plutôt que
+authorizeResource() dans le constructeur, comme recommandé au départ. La policy protège
+l'accès direct par URL (via view, create, delete), tandis que le scope deLaPromotion() dans
+index() filtre la liste affichée. Les deux mécanismes sont nécessaires : l'un sans l'autre
+laisserait une brèche.
+
+### La difficulté rencontrée
+authorizeResource() dans le constructeur du contrôleur provoquait une erreur
+"Call to undefined method PublicationController::middleware()". Ce comportement n'est pas
+mentionné explicitement dans certaines versions du guide : dans Laravel 11 et 12, la classe
+Controller de base est vide et ne fournit plus la méthode middleware() par défaut, alors que
+authorizeResource() en dépend en interne.
+
+### Comment je l'ai résolue
+J'ai remplacé authorizeResource() par des appels explicites à $this->authorize() au début de
+chaque méthode du contrôleur (index, create, store, show, destroy), avec le même résultat
+mais sans dépendre du système de middleware du contrôleur. J'ai ensuite validé le
+cloisonnement avec le test décrit dans le guide : connectée avec Awa (Groupe A), j'ai noté
+l'identifiant d'une publication, puis connectée avec Fatou (Groupe B) dans un autre profil
+Chrome, j'ai tenté d'accéder directement à cette URL. Le résultat a été une erreur 403, ce
+qui confirme que la policy fonctionne correctement.
