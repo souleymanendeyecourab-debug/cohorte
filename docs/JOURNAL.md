@@ -154,3 +154,33 @@ cloisonnement avec le test décrit dans le guide : connectée avec Awa (Groupe A
 l'identifiant d'une publication, puis connectée avec Fatou (Groupe B) dans un autre profil
 Chrome, j'ai tenté d'accéder directement à cette URL. Le résultat a été une erreur 403, ce
 qui confirme que la policy fonctionne correctement.
+
+
+## Phase 6 — L'entraide, questions et réponses
+
+Branche : feat/06-entraide
+Dates : 23 août 2026
+
+### Ce que j'ai fait
+Créé le QuestionController (index, create, store, show), le ReponseController (store, destroy)
+et le ReponseRetenueController, un contrôleur dédié à l'action de désigner une réponse comme
+retenue. Ajouté la méthode designerReponse à la PublicationPolicy, les vues de l'entraide, et
+testé le flux complet : poser une question, y répondre, marquer une réponse comme retenue
+avec crédit de 10 points à son auteur.
+
+### Pourquoi je l'ai fait ainsi
+J'ai séparé la désignation de la réponse retenue dans son propre contrôleur plutôt que
+d'ajouter une méthode au QuestionController, comme recommandé : ce n'est pas vraiment
+"modifier une question", c'est une action à part avec ses propres règles de droits (seul
+l'auteur de la question peut le faire).
+
+### La difficulté rencontrée
+La commande make:controller de cette version de Laravel n'accepte pas l'option --only utilisée
+seule pour restreindre les méthodes générées. J'ai dû générer des contrôleurs simples et
+écrire moi-même les méthodes store() et destroy() dont j'avais besoin.
+
+### Comment je l'ai résolue
+J'ai généré les contrôleurs sans options particulières, puis rempli manuellement chaque
+méthode selon le rôle attendu. J'ai aussi veillé à garder la vérification abort_unless() dans
+ReponseRetenueController, qui empêche de désigner comme retenue une réponse appartenant à
+une autre question.
