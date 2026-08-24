@@ -13,6 +13,10 @@ return [
     | a conventional file to locate the various service credentials.
     |
     */
+    'openrouter' => [
+    'api_key' => env('OPENROUTER_API_KEY'),
+    'model' => env('OPENROUTER_MODEL', 'meta-llama/llama-3.1-8b-instruct:free'),
+],
 
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
