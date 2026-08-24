@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Services\ModerationService;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Validator;
 
 class StorePublicationRequest extends FormRequest
 {
@@ -24,6 +26,30 @@ class StorePublicationRequest extends FormRequest
         return [
             'contenu.required' => 'Votre publication ne peut pas être vide.',
             'contenu.min' => 'Votre publication doit faire au moins 10 caractères.',
+        ];
+    }
+
+    public function after(): array
+    {
+        return [
+            function (Validator $validator) {
+                // On ne lance la modération que si les règles de base sont déjà valides
+                if ($validator->errors()->isNotEmpty()) {
+                    return;
+                }
+
+                $texte = trim(($this->input('titre') ?? '') . ' ' . $this->input('contenu'));
+
+                $resultat = app(ModerationService::class)->moderate($texte);
+
+                if (! $resultat['appropriate']) {
+                    $validator->errors()->add(
+                        'contenu',
+                        'Votre publication a été refusée par la modération automatique'
+                        . ($resultat['reason'] ? " : {$resultat['reason']}" : '.')
+                    );
+                }
+            },
         ];
     }
 }

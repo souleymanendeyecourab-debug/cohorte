@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Entraide;
 use App\Http\Controllers\Controller;
 use App\Models\Publication;
 use App\Models\Reponse;
+use App\Services\ModerationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class ReponseController extends Controller
 {
@@ -15,6 +17,15 @@ class ReponseController extends Controller
         $donnees = $request->validate([
             'contenu' => ['required', 'string', 'min:5', 'max:2000'],
         ]);
+
+        $resultat = app(ModerationService::class)->moderate($donnees['contenu']);
+
+        if (! $resultat['appropriate']) {
+            throw ValidationException::withMessages([
+                'contenu' => 'Votre réponse a été refusée par la modération automatique'
+                    . ($resultat['reason'] ? " : {$resultat['reason']}" : '.'),
+            ]);
+        }
 
         Reponse::create([
             'publication_id' => $question->id,

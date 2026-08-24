@@ -184,3 +184,13 @@ J'ai généré les contrôleurs sans options particulières, puis rempli manuell
 méthode selon le rôle attendu. J'ai aussi veillé à garder la vérification abort_unless() dans
 ReponseRetenueController, qui empêche de désigner comme retenue une réponse appartenant à
 une autre question.
+
+## Phase 7 — Modération automatique (OpenRouter)
+
+- Création d'un compte OpenRouter et génération d'une clé API
+- Ajout de openrouter dans config/services.php
+- Création de App\Services\ModerationService qui interroge l'API OpenRouter (modèle openrouter/free, routeur auto gratuit) pour détecter insultes, harcèlement, discours haineux, spam et contenu sexuel explicite
+- Comportement fail-open : en cas d'erreur API, le contenu est laissé passer pour ne pas bloquer la disponibilité du site
+- Branchement dans StorePublicationRequest (via after()) pour les publications et questions, et directement dans ReponseController pour les réponses
+- Validation du bon fonctionnement via Tinker (contenu correct accepté, contenu insultant refusé avec raison)
+- Deux modèles gratuits initialement choisis sont devenus indisponibles en cours de route (404) ; passage au routeur automatique openrouter/free pour plus de robustesse
