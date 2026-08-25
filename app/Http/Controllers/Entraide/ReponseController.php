@@ -18,7 +18,7 @@ class ReponseController extends Controller
             'contenu' => ['required', 'string', 'min:5', 'max:2000'],
         ]);
 
-        $resultat = app(ModerationService::class)->moderate($donnees['contenu']);
+        $resultat = app(ModerationService::class)->moderate($donnees['contenu'], $request->user()->id);
 
         if (! $resultat['appropriate']) {
             throw ValidationException::withMessages([

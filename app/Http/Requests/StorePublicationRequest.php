@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Services\DoublonService;
 use App\Services\ModerationService;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
@@ -33,14 +34,18 @@ class StorePublicationRequest extends FormRequest
     {
         return [
             function (Validator $validator) {
-                // On ne lance la modération que si les règles de base sont déjà valides
                 if ($validator->errors()->isNotEmpty()) {
+                    return;
+                }
+
+                if (app(DoublonService::class)->estDoublon($this->input('contenu'), $this->user()->id)) {
+                    $validator->errors()->add('contenu', 'Vous avez déjà publié un contenu très similaire récemment.');
                     return;
                 }
 
                 $texte = trim(($this->input('titre') ?? '') . ' ' . $this->input('contenu'));
 
-                $resultat = app(ModerationService::class)->moderate($texte);
+                $resultat = app(ModerationService::class)->moderate($texte, $this->user()->id);
 
                 if (! $resultat['appropriate']) {
                     $validator->errors()->add(
