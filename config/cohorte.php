@@ -1,6 +1,10 @@
 <?php
 
 return [
+
+
+    'seuil_similarite_doublon' => (int) env('COHORTE_SEUIL_DOUBLON', 92),
+    
     // Nombre d'appels à l'IA autorisés par membre et par jour
     'quota_ia_quotidien' => (int) env('COHORTE_QUOTA_IA', 10),
 
@@ -9,6 +13,8 @@ return [
 
     // Score de réputation ouvrant le droit d'épingler
     'seuil_epinglage' => (int) env('COHORTE_SEUIL_EPINGLAGE', 50),
+
+    
 
     // Que faire si OpenRouter ne répond pas : publier quand même (true)
     // ou envoyer en file de modération (false) ? Décision à justifier.

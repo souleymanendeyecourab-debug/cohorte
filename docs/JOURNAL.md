@@ -194,3 +194,15 @@ une autre question.
 - Branchement dans StorePublicationRequest (via after()) pour les publications et questions, et directement dans ReponseController pour les réponses
 - Validation du bon fonctionnement via Tinker (contenu correct accepté, contenu insultant refusé avec raison)
 - Deux modèles gratuits initialement choisis sont devenus indisponibles en cours de route (404) ; passage au routeur automatique openrouter/free pour plus de robustesse
+
+## Phase 8 — Signalements, quota IA et détection de doublon
+
+- Création de SignalementController : un membre peut signaler une publication (motifs : spam, hors sujet, inapproprié, harcèlement, autre), sauf sa propre publication
+- Utilisation de la Policy signaler() déjà existante pour l'autorisation
+- Masquage automatique de la publication (statut = masque) une fois le seuil de signalements atteint (config seuil_signalement, 3 par défaut)
+- L'auteur reste informé de sa publication masquée via une bannière dédiée dans la vue
+- Ajout d'un quota IA quotidien par utilisateur dans ModerationService (config quota_ia_quotidien, 10/jour), suivi via le cache Laravel avec expiration à minuit
+- Au-delà du quota (ou en cas d'erreur API), le comportement suit le réglage moderation_fail_open déjà défini en Phase 0
+- Création de DoublonService : détecte si le contenu d'une nouvelle publication est très similaire (similar_text, seuil configurable à 92%) à une publication du même auteur postée dans les dernières 24h, après normalisation du texte (minuscules, ponctuation retirée)
+- Branchement de la détection de doublon dans StorePublicationRequest, avant l'appel à la modération IA
+- Validation de bout en bout via Tinker : signalement + masquage, quota atteint/non atteint, doublon détecté/non détecté
