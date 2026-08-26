@@ -48,4 +48,9 @@ class PublicationPolicy
         return $user->id === $publication->user_id
             && $publication->type === 'question';
     }
+        public function epingler(User $user, Publication $publication): bool
+    {
+        return $user->id === $publication->user_id
+            && $user->points >= config('cohorte.seuil_epinglage');
+    }
 }

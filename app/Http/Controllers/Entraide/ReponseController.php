@@ -33,6 +33,8 @@ class ReponseController extends Controller
             'contenu' => $donnees['contenu'],
         ]);
 
+        $request->user()->increment('points', 3);
+
         return back()->with('succes', 'Votre réponse a été publiée.');
     }
 
