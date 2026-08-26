@@ -8,6 +8,7 @@ use App\Http\Controllers\Feed\SignalementController;
 use App\Http\Controllers\Profil\ProfilController;
 use App\Http\Controllers\Promotion\AdhesionController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Feed\EpinglageController;
 
 Route::get('/', fn () => view('accueil'))->name('accueil');
 
@@ -34,5 +35,7 @@ Route::middleware('auth')->group(function () {
 
         Route::post('questions/{question}/reponse-retenue', [ReponseRetenueController::class, 'store'])
             ->name('reponse-retenue.store');
+                  Route::post('publications/{publication}/epingler', [EpinglageController::class, 'toggle'])
+            ->name('publications.epingler.toggle');  
     });
 });

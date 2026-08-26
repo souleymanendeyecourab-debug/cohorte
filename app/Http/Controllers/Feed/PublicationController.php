@@ -38,7 +38,7 @@ class PublicationController extends Controller
         return view('feed.create');
     }
 
-    public function store(StorePublicationRequest $request): RedirectResponse
+       public function store(StorePublicationRequest $request): RedirectResponse
     {
         $this->authorize('create', Publication::class);
 
@@ -49,6 +49,8 @@ class PublicationController extends Controller
             'promotion_id' => $request->user()->promotion_id,
             'statut' => 'publie',
         ]);
+
+        $request->user()->increment('points', 2);
 
         return redirect()
             ->route('publications.show', $publication)

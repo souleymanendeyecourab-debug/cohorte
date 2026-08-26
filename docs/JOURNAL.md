@@ -206,3 +206,12 @@ une autre question.
 - Création de DoublonService : détecte si le contenu d'une nouvelle publication est très similaire (similar_text, seuil configurable à 92%) à une publication du même auteur postée dans les dernières 24h, après normalisation du texte (minuscules, ponctuation retirée)
 - Branchement de la détection de doublon dans StorePublicationRequest, avant l'appel à la modération IA
 - Validation de bout en bout via Tinker : signalement + masquage, quota atteint/non atteint, doublon détecté/non détecté
+
+## Phase 9 — Réputation et épinglage
+
+- Barème de points : publication +2, réponse +3, réponse retenue +10 (déjà en place depuis la Phase 8)
+- Ajout de la méthode epingler() dans PublicationPolicy : seuil de réputation (config seuil_epinglage, 50 par défaut) et réservé aux propres publications de l'auteur
+- Création de EpinglageController::toggle() : épingle/désépingle une publication (epingle_le à now() ou null)
+- Route publications/{publication}/epingler ajoutée
+- Le fil (PublicationController@index) trie déjà par epingle_le en premier, donc les publications épinglées remontent automatiquement
+- Validation via Tinker : droit d'épingler refusé sous le seuil, refusé sur la publication d'un autre, accordé une fois le seuil atteint sur sa propre publication ; toggle testé
