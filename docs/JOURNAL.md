@@ -1,3 +1,21 @@
+## Phase 0 — Installation et mise en place du dépôt
+
+Branche : feat/00-installation
+Date : [mets la date d'aujourd'hui]
+
+### Ce que j'ai fait
+Installation de Laravel 12.66 via Herd (PHP 8.4), configuration de SQLite comme base de données, création du dépôt Git et connexion au dépôt distant GitHub. Ajout de la configuration métier centralisée dans config/cohorte.php et du gabarit de base avec le composant d'alerte.
+
+### Pourquoi je l'ai fait ainsi
+SQLite évite d'installer un serveur de base de données séparé. La configuration centralisée dans un seul fichier permet de changer les seuils métier sans toucher au code.
+
+### La difficulté rencontrée
+Conflit entre les versions PHP installées (XAMPP en 8.1 vs Herd en 8.4) qui bloquait l'installation de Laravel 12, car il nécessite PHP 8.2 minimum.
+
+### Comment je l'ai résolue
+Suppression de C:\xampp\php du PATH des variables système Windows pour laisser Herd prioritaire.
+
+
 ## Phase 1 — Le modèle de données et les relations Eloquent
 
 Branche : feat/01-modele-donnees
