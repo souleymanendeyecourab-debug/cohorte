@@ -53,4 +53,9 @@ class PublicationPolicy
         return $user->id === $publication->user_id
             && $user->points >= config('cohorte.seuil_epinglage');
     }
+    public function epingler(User $user, Publication $publication): bool
+{
+    return $user->promotion_id === $publication->promotion_id
+        && ($user->points >= config('cohorte.seuil_epinglage') || $user->estDelegue());
+}
 }
