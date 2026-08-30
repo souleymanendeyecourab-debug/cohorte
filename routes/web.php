@@ -10,6 +10,7 @@ use App\Http\Controllers\Promotion\AdhesionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Feed\EpinglageController;
 
+
 Route::get('/', fn () => view('accueil'))->name('accueil');
 
 Route::middleware('auth')->group(function () {
@@ -26,6 +27,9 @@ Route::middleware('auth')->group(function () {
 
         Route::resource('questions', QuestionController::class)
             ->only(['index', 'create', 'store', 'show']);
+
+            Route::post('publications/{publication}/epingler', [EpinglageController::class, 'store'])
+    ->name('publications.epingler');
 
         Route::post('questions/{question}/reponses', [ReponseController::class, 'store'])
             ->name('reponses.store');

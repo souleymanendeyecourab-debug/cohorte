@@ -24,7 +24,8 @@ class PublicationController extends Controller
             ->deLaPromotion($request->user()->promotion_id)
             ->with('auteur')
             ->withCount('signalements')
-            ->orderByDesc('epingle_le')
+            ->orderByRaw('epingle_le IS NULL')
+->orderByDesc('epingle_le')
             ->latest()
             ->paginate(15);
 
